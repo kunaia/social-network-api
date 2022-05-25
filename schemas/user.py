@@ -1,4 +1,6 @@
 from ma import ma
+from libs.abstractapi import validate_email
+
 from passlib.hash import sha256_crypt
 from marshmallow import validate, validates, post_load, ValidationError
 
@@ -14,8 +16,8 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
     @validates('email')
     def email_validator(self, email):
-        email_validator = validate.Email()
-        email_validator(email)
+        if not validate_email(email):
+            raise ValidationError("Not valid email address")
 
     @validates('password')
     def password_validator(self, password):
