@@ -9,7 +9,7 @@ password = "12345"
 
 
 class RegistrationTest(BaseCase):
-    def test_registration(self):
+    def test_successfull_registration(self):
         payload = json.dumps({
             "name": name,
             "surname": surname,
@@ -22,6 +22,21 @@ class RegistrationTest(BaseCase):
                                  data=payload)
 
         self.assertEqual(201, response.status_code)
+
+    def test_unsuccessfull_registration(self):
+        payload = json.dumps({
+            "name": name,
+            "surname": surname,
+            "email": "somerandomthings@jasf.notvalid",
+            "password": password
+        })
+
+        response = self.app.post("/register",
+                                 headers={"Content-Type": "application/json"},
+                                 data=payload)
+
+        self.assertEqual(400, response.status_code)
+        self.assertEqual(None, response.json.get("user", None))
 
 
 class LoginTest(BaseCase):
