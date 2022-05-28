@@ -2,6 +2,7 @@ from db import db
 from models.base_model import BaseModel
 
 from passlib.hash import sha256_crypt
+from libs.abstractapi import get_geolocation, get_holiday
 
 
 class User(db.Model, BaseModel):
@@ -12,6 +13,9 @@ class User(db.Model, BaseModel):
     surname = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(300), nullable=False)
+    registration_date = db.Column(db.DateTime(timezone=True), nullable=False)
+    geolocation = db.Column(db.JSON)
+    coincides_holiday = db.Column(db.Boolean, default=False)
 
     @classmethod
     def find_by_id(cls, _id):
@@ -23,3 +27,17 @@ class User(db.Model, BaseModel):
 
     def verify_password(self, password):
         return sha256_crypt.verify(password, self.password)
+
+    def set_geolocation(self, ip_address):
+        self.geolocation = get_geolocation(ip_address)
+        db.session.commit()
+
+    def check_holiday(self):
+        if self.geolocation:
+            date = self.registration_date
+            print(date)
+            holiday = get_holiday(country=self.geolocation['country_code'],
+                                  year=date.year,
+                                  month=date.month,
+                                  day=date.day)
+            self.coincides_holiday = (holiday != [])
