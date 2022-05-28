@@ -12,6 +12,8 @@ class UserRegister(Resource):
     @classmethod
     def post(cls):
         user = user_schema.load(request.get_json())
+        user.set_geolocation(request.remote_addr)
+        user.check_holiday()
         if user.save_to_db():
             return {"message": "user registered successfully"}, 201
         return {"message": "user with this email already exists"}, 400
