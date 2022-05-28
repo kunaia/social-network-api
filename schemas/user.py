@@ -1,8 +1,9 @@
 from ma import ma
+from datetime import datetime
 from libs.abstractapi import validate_email
 
 from passlib.hash import sha256_crypt
-from marshmallow import validate, validates, post_load, ValidationError
+from marshmallow import validate, validates, post_load, ValidationError, pre_load
 
 from models.user import User
 
@@ -10,7 +11,7 @@ from models.user import User
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
-        dump_only = ("id",)
+        dump_only = ("id", "registration_date")
         load_only = ("password",)
         load_instance = True
 
@@ -25,6 +26,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
             raise ValidationError("too short password")
 
     @post_load
-    def encrypt_password(self, data, *args, **kwargs):
-        data["password"] = sha256_crypt.hash(data['password'])
-        return data
+    def post_processing(self, user, *args, **kwargs):
+        user.password = sha256_crypt.hash(user.password)
+        user.registration_date = datetime.now()
+        return user
