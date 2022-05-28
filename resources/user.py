@@ -1,9 +1,12 @@
 from flask import request
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import \
+    create_access_token, create_refresh_token, \
+    get_jwt_identity, get_jwt, jwt_required
 
 from schemas.user import UserSchema
 from models.user import User
+from models.blocklist import TokenBlocklist
 
 user_schema = UserSchema()
 
@@ -17,6 +20,16 @@ class UserRegister(Resource):
         if user.save_to_db():
             return {"message": "user registered successfully"}, 201
         return {"message": "user with this email already exists"}, 400
+
+
+class UserInfo(Resource):
+    @classmethod
+    @jwt_required
+    def get(cls):
+        user = User.find_by_id(get_jwt_identity())
+        if user is None:
+            return {"message": "user not found"}, 404
+        return {"user": user_schema.dump(user)}, 200
 
 
 class UserLogin(Resource):
@@ -42,3 +55,22 @@ class UserLogin(Resource):
                        "refresh_token": refresh_token
                    }, 200
         return {"message": "password is incorrect"}, 400
+
+
+class UserLogout(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()['jti']
+        token = TokenBlocklist(jti, 'access')
+        token.add_to_blacklist()
+        TokenBlocklist.delete_expired_tokens()
+        return {"message": "You are logged out"}, 200
+
+
+class UserLogout2(Resource):
+    @jwt_required(refresh=True)
+    def post(self):
+        jti = get_jwt()['jti']
+        token = TokenBlocklist(jti, 'refresh')
+        token.add_to_blacklist()
+        return {"message": "You are logged out"}, 200
