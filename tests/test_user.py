@@ -81,6 +81,7 @@ class LogoutTest(BaseCase):
 class UserInfoTest(BaseCase):
     def test_user_info(self):
         response = register(self.app, name="someone")
+        response = login(self.app)
         response = self.app.get(
             "/user",
             headers={
