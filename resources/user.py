@@ -24,7 +24,7 @@ class UserRegister(Resource):
 
 class UserInfo(Resource):
     @classmethod
-    @jwt_required
+    @jwt_required()
     def get(cls):
         user = User.find_by_id(get_jwt_identity())
         if user is None:

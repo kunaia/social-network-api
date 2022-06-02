@@ -11,7 +11,8 @@ from db import db
 
 from config import Config
 
-from resources.user import UserRegister, UserLogin
+from models.blocklist import TokenBlocklist
+from resources.user import UserRegister, UserLogin, UserLogout, UserLogout2, UserInfo
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -23,6 +24,8 @@ migrate = Migrate(app, db)
 @app.before_first_request
 def create_tables():
     db.create_all()
+
+# @app.before_first_request
 # def flask_migrate():
 #     if not os.path.exists("migrations"):
 #         status_code = os.system("flask db init")
@@ -38,9 +41,19 @@ def handle_marshmallow_validation(err):
 
 jwt = JWTManager(app)
 
+
+@jwt.token_in_blocklist_loader
+def check_token_in_blocklist(jwt_header, jwt_payload):
+    jti = jwt_payload['jti']
+    return TokenBlocklist.is_blacklisted(jti)
+
+
 # api resources
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, '/login')
+api.add_resource(UserLogout, '/logout')
+api.add_resource(UserLogout2, '/logout2')
+api.add_resource(UserInfo, '/user')
 
 db.init_app(app)
 ma.init_app(app)
