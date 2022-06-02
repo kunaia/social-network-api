@@ -5,7 +5,7 @@ from config import Config
 from datetime import datetime
 
 
-class TokenBlocklist(BaseModel):
+class TokenBlocklist(db.Model, BaseModel):
     __tablename__ = "blocklist"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
