@@ -1,5 +1,6 @@
 from db import db
 from models.base_model import BaseModel
+from models.post import Post
 
 from passlib.hash import sha256_crypt
 from libs.abstractapi import get_geolocation, get_holiday
@@ -16,6 +17,8 @@ class User(db.Model, BaseModel):
     registration_date = db.Column(db.DateTime(timezone=True), nullable=False)
     geolocation = db.Column(db.JSON)
     coincides_holiday = db.Column(db.Boolean, default=False)
+
+    post = db.relationship("Post", backref=db.backref("author"), lazy="dynamic")
 
     @classmethod
     def find_by_id(cls, _id):
