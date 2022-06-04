@@ -37,7 +37,6 @@ class Post(db.Model, BaseModel):
             if self.view_cnt is None:
                 self.view_cnt = 0
             self.view_cnt += 1
-            print(self.view_cnt)
             db.session.commit()
 
     def like_toggled_by(self, user_id):

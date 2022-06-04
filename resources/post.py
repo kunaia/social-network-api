@@ -18,7 +18,8 @@ class PostCreate(Resource):
         data["author_fk"] = get_jwt_identity()
         post = post_schema.load(data)
         if post.save_to_db():
-            return {"message": "created successfully"}, 201
+            return {"message": "created successfully",
+                    "post": post_schema.dump(post)}, 201
         return {"message": "error while saving to db"}, 500
 
 
@@ -32,7 +33,6 @@ class PostResource(Resource):
         if post is None:
             return {"message": "post not found"}, 404
         user_id = get_jwt_identity()
-        print(user_id)
         if user_id:
             post.viewed_by(user_id)
         post_schema.context["user_id"] = user_id
