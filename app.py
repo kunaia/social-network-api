@@ -22,16 +22,16 @@ api = Api(app)
 migrate = Migrate(app, db)
 
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
-
 @app.before_first_request
-def flask_migrate():
-    if not os.path.exists("migrations"):
-        status_code = os.system("flask db init")
-    if os.system("flask db migrate") == 0:
-        status_code = os.system("flask db upgrade")
+def create_tables():
+    db.create_all()
+
+# @app.before_first_request
+# def flask_migrate():
+#     if not os.path.exists("migrations"):
+#         status_code = os.system("flask db init")
+#     if os.system("flask db migrate") == 0:
+#         status_code = os.system("flask db upgrade")
 
 
 # marshmallow validation error handler
@@ -57,7 +57,7 @@ api.add_resource(UserLogout2, '/logout2')
 api.add_resource(UserInfo, '/user')
 
 # post resources
-api.add_resource(PostCreate, '/create_post')
+api.add_resource(PostCreate, '/post')
 api.add_resource(PostResource, '/post/<int:post_id>')
 api.add_resource(PostLike, '/post/<int:post_id>/like')
 api.add_resource(PostsResource, '/posts')
