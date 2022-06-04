@@ -23,15 +23,16 @@ migrate = Migrate(app, db)
 
 
 @app.before_first_request
-def create_tables():
-    db.create_all()
+def before_first_request():
+    def flask_migrate():
+        if not os.path.exists("migrations"):
+            status_code = os.system("flask db init")
+        if os.system("flask db migrate") == 0:
+            status_code = os.system("flask db upgrade")
 
-# @app.before_first_request
-# def flask_migrate():
-#     if not os.path.exists("migrations"):
-#         status_code = os.system("flask db init")
-#     if os.system("flask db migrate") == 0:
-#         status_code = os.system("flask db upgrade")
+    db.create_all()
+    if os.environ.get("FLASK_MIGRATE", "False") == "True":
+        flask_migrate()
 
 
 # marshmallow validation error handler
