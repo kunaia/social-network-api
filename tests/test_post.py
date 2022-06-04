@@ -47,6 +47,15 @@ def delete_post(app, post_id, access_token=None):
     return response
 
 
+def like_post(app, post_id, access_token=None):
+    headers = {"Content-Type": "application/json"}
+    if access_token:
+        headers['Authorization'] = f"Bearer {access_token}"
+    response = app.post(f"/post/{post_id}/like",
+                        headers=headers)
+    return response
+
+
 class PostCrudTests(BaseCase):
     def test_post_crud(self):
         register_response = register(app=self.app)
@@ -82,3 +91,24 @@ class PostCrudTests(BaseCase):
         # delete
         self.assertEqual(200, response1.status_code)
         self.assertEqual(404, response2.status_code)
+
+    def test_post_like_unlike(self):
+        register_response = register(app=self.app)
+        login_response = login(app=self.app)
+        response = create_post(app=self.app, access_token=login_response.json['access_token'])
+
+        post_id = response.json["post"]["id"]
+
+        # view post
+        response = get_post(app=self.app, post_id=post_id, access_token=login_response.json['access_token'])
+        self.assertEqual(1, response.json["post"]["view_cnt"])
+
+        # like post
+        response = like_post(app=self.app, post_id=post_id, access_token=login_response.json['access_token'])
+        response = get_post(app=self.app, post_id=post_id, access_token=login_response.json['access_token'])
+        self.assertEqual(1, response.json["post"]["like_cnt"])
+
+        # unlike post
+        response = like_post(app=self.app, post_id=post_id, access_token=login_response.json['access_token'])
+        response = get_post(app=self.app, post_id=post_id, access_token=login_response.json['access_token'])
+        self.assertEqual(0, response.json["post"]["like_cnt"])
