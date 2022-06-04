@@ -13,7 +13,7 @@ from config import Config
 
 from models.blocklist import TokenBlocklist
 from resources.user import UserRegister, UserLogin, UserLogout, UserLogout2, UserInfo
-from resources.post import PostCreate, PostResource
+from resources.post import PostCreate, PostResource, PostsResource, PostLike
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -59,6 +59,8 @@ api.add_resource(UserInfo, '/user')
 # post resources
 api.add_resource(PostCreate, '/create_post')
 api.add_resource(PostResource, '/post/<int:post_id>')
+api.add_resource(PostLike, '/post/<int:post_id>/like')
+api.add_resource(PostsResource, '/posts')
 
 db.init_app(app)
 ma.init_app(app)
