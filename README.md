@@ -1,6 +1,18 @@
 # social-network-api
 Rest API based social network
 
+## used technologies
+* Flask
+* Flask_Restful
+* Flask_jwt_extanded
+* Flask_Marshmallow
+* Flask_SQLAlchemy
+* Flask_Migrate
+* requests
+* unittest
+* 
+* Postgresql
+____
 this api uses apstractapi.com as third party api to validate emails, get geolocation of ip-s and for checking holiday infos. So you need to register and get write corresponding API keys in .env file.
 
 ## How to Make Social Network API work?
@@ -13,7 +25,7 @@ this api uses apstractapi.com as third party api to validate emails, get geoloca
 4. run api
    * `python app.py`
 
-
+____
 ## API endpoints
 * ### user resources
   * `[POST] /register` -- **user registration**. you need to pass following arguments:
