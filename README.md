@@ -36,5 +36,5 @@ this api uses apstractapi.com as third party api to validate emails, get geoloca
   * `[GET/PUT/DELETE] /post/'int:post_id'` -- **post modification**. 
     1. Authorization header is optional for GET method, while it is required id PUT/DELETE methods
     2. in PUT method you have to pass argument:
-       * `body`
+       * body
   * `[POST] /post/'int:post_id'/like` -- **post Like/Unlike**. This endpoint toggles 'like' attribute on user_post connection. you just neet to pass Authorization header while requesting on this endpoint.
