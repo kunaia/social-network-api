@@ -17,8 +17,8 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
     @validates('email')
     def email_validator(self, email):
-        if not validate_email(email):
-            raise ValidationError("Not valid email address")
+        validator = validate.Email()
+        validator(email)
 
     @validates('password')
     def password_validator(self, password):
