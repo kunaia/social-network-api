@@ -13,7 +13,7 @@ Rest API based social network
 * 
 * Postgresql
 ____
-this api uses apstractapi.com as third party api to validate emails, get geolocation of ip-s and for checking holiday infos. So you need to register and get write corresponding API keys in .env file.
+this api uses apstractapi.com as third party api to validate emails, get geolocation of ip-s and for checking holiday infos. So you need to register and write corresponding API keys in .env file.
 
 ## How to Make Social Network API work?
 1. setup conda environment with _conda_env.yml_ file and activate it
